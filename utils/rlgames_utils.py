@@ -1,7 +1,6 @@
 import gym.spaces
 from rl_games.common import env_configurations, vecenv
 import torch
-import gym
 
 
 class ManiSkillEnv(vecenv.IVecEnv):
@@ -28,9 +27,11 @@ class ManiSkillEnv(vecenv.IVecEnv):
         action_shape = self.env.single_action_space.shape
         obs_shape = self.env.single_observation_space.shape
 
-        info["action_space"] = gym.spaces.Box(float("-inf"), float("inf"), action_shape)
-        info['observation_space'] = gym.spaces.Box(float("-inf"), float("inf"), obs_shape)
-        # info['observation_space'] = self.env.single_observation_space
+        # info["action_space"] = gym.spaces.Box(float("-inf"), float("inf"), action_shape)
+        # info['observation_space'] = gym.spaces.Box(float("-inf"), float("inf"), obs_shape)
+        info['observation_space'] = self.env.single_observation_space
+        info['action_space'] = self.env.single_action_space
+
         # info['state_space'] = self.env.state_space
 
         # if hasattr(self.env, "amp_observation_space"):
