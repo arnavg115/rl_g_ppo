@@ -38,6 +38,7 @@ from omegaconf import DictConfig, OmegaConf
 #     return config_dict
 
 
+
 @hydra.main(version_base="1.1", config_name="config", config_path="./cfg")
 def launch_rlg_hydra(cfg: DictConfig):
 
@@ -70,9 +71,8 @@ def launch_rlg_hydra(cfg: DictConfig):
     #     cfg.checkpoint = to_absolute_path(cfg.checkpoint)
 
     cfg_dict = omegaconf_to_dict(cfg)
-    print_dict(cfg_dict)
+    # print_dict(cfg_dict)
 
-    # set numpy formatting for printing only
 
     # global rank of the GPU
     global_rank = int(os.getenv("RANK", "0"))
@@ -81,33 +81,12 @@ def launch_rlg_hydra(cfg: DictConfig):
     cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic, rank=global_rank)
 
     def create_maniskill_env(**kwargs):
+        print(cfg.task.env)
         envs = gym.make(
             "PickCube-v1",
-            **kwargs,
+           **cfg.task.env
         )
         envs = ManiSkillVectorEnv(envs)
-        # envs = isaacgymenvs.make(
-        #     cfg.seed, 
-        #     cfg.task_name, 
-        #     cfg.task.env.numEnvs, 
-        #     cfg.sim_device,
-        #     cfg.rl_device,
-        #     cfg.graphics_device_id,
-        #     cfg.headless,
-        #     cfg.multi_gpu,
-        #     cfg.capture_video,
-        #     cfg.force_render,
-        #     cfg,
-        #     **kwargs,
-        # )
-        # if cfg.capture_video:
-        #     envs.is_vector_env = True
-        #     envs = gym.wrappers.RecordVideo(
-        #         envs,
-        #         f"videos/{run_name}",
-        #         step_trigger=lambda step: step % cfg.capture_video_freq == 0,
-        #         video_length=cfg.capture_video_len,
-        #     )
         return envs
 
     env_configurations.register('maniskill', {

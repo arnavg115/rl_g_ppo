@@ -44,7 +44,7 @@ params:
     normalize_input: True
     normalize_value: True
     value_bootstrap: True
-    num_actors: ${....task.env.num_envs}
+    num_actors: 512
     reward_shaper:
       scale_value: 0.01
     normalize_advantage: True

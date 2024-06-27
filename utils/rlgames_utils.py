@@ -1,4 +1,7 @@
+import gym.spaces
 from rl_games.common import env_configurations, vecenv
+import torch
+import gym
 
 
 class ManiSkillEnv(vecenv.IVecEnv):
@@ -7,21 +10,27 @@ class ManiSkillEnv(vecenv.IVecEnv):
         self.env = env_configurations.configurations[config_name]['env_creator'](**kwargs)
 
     def step(self, actions):
-        return self.env.step(actions)
+        obs, rew, terminated, truncated, info = self.env.step(actions)
+        done = torch.logical_or(terminated, truncated)
+        return {"obs":obs}, rew, done, info
 
     def reset(self):
-        return self.env.reset()
+        return {"obs":self.env.reset()[0]}
     
     def reset_done(self):
-        return self.env.reset_done()
+        return self.reset()
 
     def get_number_of_agents(self):
         return self.env.get_number_of_agents()
 
     def get_env_info(self):
         info = {}
-        info['action_space'] = self.env.action_space
-        info['observation_space'] = self.env.observation_space
+        action_shape = self.env.single_action_space.shape
+        obs_shape = self.env.single_observation_space.shape
+
+        info["action_space"] = gym.spaces.Box(float("-inf"), float("inf"), action_shape)
+        info['observation_space'] = gym.spaces.Box(float("-inf"), float("inf"), obs_shape)
+        # info['observation_space'] = self.env.single_observation_space
         # info['state_space'] = self.env.state_space
 
         # if hasattr(self.env, "amp_observation_space"):
