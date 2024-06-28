@@ -9,3 +9,4 @@ env:
   control_mode: "pd_joint_delta_pos"
   obs_mode: "state"
   render_mode: "sensors"
+  ignore_terminations: False
