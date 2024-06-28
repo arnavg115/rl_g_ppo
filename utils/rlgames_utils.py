@@ -1,5 +1,6 @@
 import gym.spaces
 from rl_games.common import env_configurations, vecenv
+from rl_games.common.algo_observer import AlgoObserver
 import torch
 
 
@@ -53,3 +54,35 @@ class ManiSkillEnv(vecenv.IVecEnv):
         """
         if hasattr(self.env, 'set_train_info'):
             self.env.set_train_info(env_frames, *args_, **kwargs_)
+
+
+class ManiSkillAlgoObserver(AlgoObserver):
+    """Allows us to log stats from the env along with the algorithm running stats. """
+
+    def __init__(self):
+        super().__init__()
+        self.algo = None
+        self.writer = None
+
+        self.sr = 0
+
+        self.new_finished_episodes = False
+
+    def after_init(self, algo):
+        self.algo = algo
+        self.writer = self.algo.writer
+
+    def process_infos(self, infos, done_indices):
+        assert isinstance(infos, dict), 'RLGPUAlgoObserver expects dict info'
+        if "final_info" in infos:
+            self.new_finished_episodes = True
+            mask = infos["_final_info"]
+            fin_info = infos["final_info"]
+            if "success" in infos:
+                self.sr = fin_infos["success"][mask].cpu().numpy().mean()
+
+    def after_print_stats(self, frame, epoch_num, total_time):
+        if self.new_finished_episodes:
+            self.writer.add_scalar("rewards/success_rate", self.sr, frame)
+            self.new_finished_episodes = False
+            self.sr = 0

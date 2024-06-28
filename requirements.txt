@@ -1,3 +1,5 @@
 torch
 hydra-core
 ray
+git+https://github.com/Denys88/rl_games.git@DM/gymnasium
+numpy<2.0.0
