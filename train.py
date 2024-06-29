@@ -49,7 +49,7 @@ def launch_rlg_hydra(cfg: DictConfig):
     from datetime import datetime
     import gymnasium as gym
     # from isaacgymenvs.utils.rlgames_utils import RLGPUEnv, RLGPUAlgoObserver, MultiObserver, ComplexObsRLGPUEnv
-    from utils.rlgames_utils import ManiSkillEnv
+    from utils.rlgames_utils import ManiSkillEnv, ManiSkillAlgoObserver
     # from isaacgymenvs.utils.wandb_utils import WandbAlgoObserver
     from rl_games.common import env_configurations, vecenv
     from rl_games.torch_runner import Runner
@@ -114,11 +114,11 @@ def launch_rlg_hydra(cfg: DictConfig):
 
     # # convert CLI arguments into dictionary
     # # create runner and set the settings
-    def build_runner():
-        runner = Runner()
+    def build_runner(observer):
+        runner = Runner(observer)
         return runner
-
-    runner = build_runner()
+    observer = ManiSkillAlgoObserver()
+    runner = build_runner(observer)
     runner.load(rlg_config_dict)
     runner.reset()
 
