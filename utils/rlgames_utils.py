@@ -79,7 +79,7 @@ class ManiSkillAlgoObserver(AlgoObserver):
             mask = infos["_final_info"]
             fin_info = infos["final_info"]
             if "success" in infos:
-                self.sr = fin_infos["success"][mask].cpu().numpy().mean()
+                self.sr = fin_info["success"][mask].cpu().numpy().mean()
 
     def after_print_stats(self, frame, epoch_num, total_time):
         if self.new_finished_episodes:
