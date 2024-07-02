@@ -83,10 +83,9 @@ def launch_rlg_hydra(cfg: DictConfig):
     def create_maniskill_env(**kwargs):
         print(cfg.task.env)
         envs = gym.make(
-            "PickCube-v1",
            **cfg.task.env
         )
-        envs = ManiSkillVectorEnv(envs)
+        envs = ManiSkillVectorEnv(envs, ignore_terminations=True)
         return envs
 
     env_configurations.register('maniskill', {

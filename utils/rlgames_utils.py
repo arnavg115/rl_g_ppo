@@ -12,6 +12,7 @@ class ManiSkillEnv(vecenv.IVecEnv):
     def step(self, actions):
         obs, rew, terminated, truncated, info = self.env.step(actions)
         done = torch.logical_or(terminated, truncated)
+        info["rew"] = rew
         return {"obs":obs}, rew, done, info
 
     def reset(self):
@@ -25,8 +26,6 @@ class ManiSkillEnv(vecenv.IVecEnv):
 
     def get_env_info(self):
         info = {}
-        action_shape = self.env.single_action_space.shape
-        obs_shape = self.env.single_observation_space.shape
 
         # info["action_space"] = gym.spaces.Box(float("-inf"), float("inf"), action_shape)
         # info['observation_space'] = gym.spaces.Box(float("-inf"), float("inf"), obs_shape)
@@ -40,7 +39,7 @@ class ManiSkillEnv(vecenv.IVecEnv):
 
         # if self.env.num_states > 0:
         #     info['state_space'] = self.env.state_space
-        print(info['action_space'], info['observation_space'])
+        # print(info['action_space'], info['observation_space'])
         # else:
         #     print(info['action_space'], info['observation_space'])
 
@@ -65,6 +64,7 @@ class ManiSkillAlgoObserver(AlgoObserver):
         self.writer = None
 
         self.sr = 0
+        self.rew = 0
 
         self.new_finished_episodes = False
 
@@ -80,9 +80,18 @@ class ManiSkillAlgoObserver(AlgoObserver):
             fin_info = infos["final_info"]
             if "success" in infos:
                 self.sr = fin_info["success"][mask].cpu().numpy().mean()
+                self.rew = infos["rew"][mask].cpu().numpy().mean()
+            if self.sr > 0:
+                print("Success: ", self.sr)
+                print("Avg Elapsed: ", fin_info["elapsed_steps"][mask].cpu().numpy().mean())
+                print("Avg rew",infos["rew"][mask].cpu().numpy().mean())
+
 
     def after_print_stats(self, frame, epoch_num, total_time):
         if self.new_finished_episodes:
             self.writer.add_scalar("rewards/success_rate", self.sr, frame)
+            self.writer.add_scalar("rewards/final_reward", self.rew, frame)
+            
             self.new_finished_episodes = False
             self.sr = 0
+            self.rew = 0

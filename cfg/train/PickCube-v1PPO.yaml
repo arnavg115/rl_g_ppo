@@ -54,7 +54,7 @@ params:
     lr_schedule: adaptive
     schedule_type: legacy
     kl_threshold: 0.1
-    max_epochs: 40
+    max_epochs: 300
     save_best_after: 200
     save_frequency: 50
     grad_norm: 1.0
@@ -66,5 +66,5 @@ params:
     mini_epochs: 16
     critic_coef: 2
     clip_value: True
-    seq_len: 4
+    seq_length: 4 # doesn't matter since no rnn
     bounds_loss_coef: 0.0001
