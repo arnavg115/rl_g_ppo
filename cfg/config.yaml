@@ -44,7 +44,7 @@ multi_gpu: False
 wandb_activate: False
 wandb_group: ''
 wandb_name: 'Test'
-wandb_entity: ''
+wandb_entity: 'ag115115'
 wandb_project: 'maniskillenvs'
 wandb_tags: []
 wandb_logcode_dir: '' 

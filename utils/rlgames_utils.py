@@ -16,7 +16,8 @@ class ManiSkillEnv(vecenv.IVecEnv):
         return {"obs":obs}, rew, done, info
 
     def reset(self):
-        return {"obs":self.env.reset()[0]}
+        out = self.env.reset()
+        return {"obs":out[0]}
     
     def reset_done(self):
         return self.reset()

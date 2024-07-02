@@ -4,6 +4,7 @@ import hydra
 
 from omegaconf import DictConfig, OmegaConf
 
+from utils.utils import MultiObserver
 
 # def preprocess_train_config(cfg, config_dict):
 #     """
@@ -53,7 +54,7 @@ def launch_rlg_hydra(cfg: DictConfig):
     # from isaacgymenvs.utils.wandb_utils import WandbAlgoObserver
     from rl_games.common import env_configurations, vecenv
     from rl_games.torch_runner import Runner
-    from rl_games.algos_torch import model_builder
+    from utils.wandb_utils import WandbAlgoObserver
     from utils.utils import set_seed
     from utils.reformat import omegaconf_to_dict, print_dict
     # from isaacgymenvs.learning import amp_continuous
@@ -116,19 +117,15 @@ def launch_rlg_hydra(cfg: DictConfig):
     def build_runner(observer):
         runner = Runner(observer)
         return runner
-    observer = ManiSkillAlgoObserver()
+    observers = [ManiSkillAlgoObserver()]
+    if cfg.wandb_activate:
+        observers.append(WandbAlgoObserver(cfg))
+    
+    observer = MultiObserver(observers)
     runner = build_runner(observer)
     runner.load(rlg_config_dict)
     runner.reset()
 
-    # dump config dict
-    # if not cfg.test:
-    #     experiment_dir = os.path.join('runs', cfg.train.params.config.name + 
-    #     '_{date:%d-%H-%M-%S}'.format(date=datetime.now()))
-
-    #     os.makedirs(experiment_dir, exist_ok=True)
-    #     with open(os.path.join(experiment_dir, 'config.yaml'), 'w') as f:
-    #         f.write(OmegaConf.to_yaml(cfg))
 
     runner.run({
         'train': not cfg.test,
