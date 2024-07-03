@@ -66,6 +66,7 @@ class ManiSkillAlgoObserver(AlgoObserver):
 
         self.sr = 0
         self.rew = 0
+        self.el_steps = 0
 
         self.new_finished_episodes = False
 
@@ -80,19 +81,22 @@ class ManiSkillAlgoObserver(AlgoObserver):
             mask = infos["_final_info"]
             fin_info = infos["final_info"]
             if "success" in infos:
-                self.sr = fin_info["success"][mask].cpu().numpy().mean()
-                self.rew = infos["rew"][mask].cpu().numpy().mean()
-            if self.sr > 0:
-                print("Success: ", self.sr)
-                print("Avg Elapsed: ", fin_info["elapsed_steps"][mask].cpu().numpy().mean())
-                print("Avg rew",infos["rew"][mask].cpu().numpy().mean())
+                self.sr += fin_info["success"][mask].cpu().numpy().sum()
+                self.rew += infos["rew"][mask].cpu().numpy().sum()
+                self.el_steps += fin_info["elapsed_steps"][mask].cpu().numpy().sum()
+            # if self.sr > 0:
+            #     print("Success: ", self.sr)
+            #     print("Avg Elapsed: ", fin_info["elapsed_steps"][mask].cpu().numpy().mean())
+            #     print("Avg rew",infos["rew"][mask].cpu().numpy().mean())
 
 
     def after_print_stats(self, frame, epoch_num, total_time):
         if self.new_finished_episodes:
-            self.writer.add_scalar("rewards/success_rate", self.sr, frame)
-            self.writer.add_scalar("rewards/final_reward", self.rew, frame)
+            self.writer.add_scalar("rewards/success_rate", self.sr/512, frame)
+            self.writer.add_scalar("rewards/final_reward", self.rew/512, frame)
+            self.writer.add_scalar("episode_lengths/el_steps", self.el_steps/512, frame)
             
             self.new_finished_episodes = False
             self.sr = 0
+            self.el_steps = 0
             self.rew = 0
