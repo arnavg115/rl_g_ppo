@@ -1,4 +1,5 @@
 from rl_games.common.algo_observer import AlgoObserver
+import random
 
 # from isaacgymenvs.utils.utils import retry
 from .reformat import omegaconf_to_dict
@@ -19,8 +20,8 @@ class WandbAlgoObserver(AlgoObserver):
         """
 
         import wandb
-
-        wandb_unique_id = f"uid_{experiment_name}"
+        num = random.randint(1,100000)
+        wandb_unique_id = f"uid_{experiment_name}-{num}"
         print(f"Wandb using unique id {wandb_unique_id}")
 
         cfg = self.cfg
@@ -30,13 +31,9 @@ class WandbAlgoObserver(AlgoObserver):
         def init_wandb():
             wandb.init(
                 project=cfg.wandb_project,
-                entity=cfg.wandb_entity,
                 group=cfg.wandb_group,
-                tags=cfg.wandb_tags,
                 sync_tensorboard=True,
-                id=wandb_unique_id,
-                name=experiment_name,
-                resume=True,
+                name=f"{experiment_name}-{num}",
                 settings=wandb.Settings(start_method='fork'),
             )
        
