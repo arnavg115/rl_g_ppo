@@ -1,0 +1,14 @@
+# used to create the object
+name: PushCube-v1
+
+
+physics_engine: ${..physics_engine}
+
+
+# if given, will override the device setting in gym.
+env:
+ id: "PushCube-v1"
+ num_envs: 512
+ control_mode: "pd_joint_delta_pos"
+ obs_mode: "state"
+ render_mode: "sensors"
