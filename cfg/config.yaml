@@ -49,9 +49,9 @@ wandb_project: 'maniskillenvs'
 wandb_tags: []
 wandb_logcode_dir: '' 
 
-capture_video: False
-capture_video_freq: 1464
-capture_video_len: 100
+capture_video: True
+capture_video_freq: 2000
+capture_video_len: 50
 force_render: True
 
 # disables rendering

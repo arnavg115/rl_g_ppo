@@ -87,6 +87,9 @@ def launch_rlg_hydra(cfg: DictConfig):
            **cfg.task.env
         )
         envs = ManiSkillVectorEnv(envs, ignore_terminations=True)
+
+        # if cfg.
+
         return envs
 
     env_configurations.register('maniskill', {
@@ -117,7 +120,7 @@ def launch_rlg_hydra(cfg: DictConfig):
     def build_runner(observer):
         runner = Runner(observer)
         return runner
-    observers = [ManiSkillAlgoObserver()]
+    observers = [ManiSkillAlgoObserver(n_envs = cfg.task.env.num_envs)]
     if cfg.wandb_activate:
         observers.append(WandbAlgoObserver(cfg))
     

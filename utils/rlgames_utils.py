@@ -59,7 +59,7 @@ class ManiSkillEnv(vecenv.IVecEnv):
 class ManiSkillAlgoObserver(AlgoObserver):
     """Allows us to log stats from the env along with the algorithm running stats. """
 
-    def __init__(self):
+    def __init__(self, n_envs):
         super().__init__()
         self.algo = None
         self.writer = None
@@ -67,6 +67,9 @@ class ManiSkillAlgoObserver(AlgoObserver):
         self.sr = 0
         self.rew = 0
         self.el_steps = 0
+        self.grasp = 0
+        self.g_enable = False
+        self.n_envs = n_envs
 
         self.new_finished_episodes = False
 
@@ -81,9 +84,13 @@ class ManiSkillAlgoObserver(AlgoObserver):
             mask = infos["_final_info"]
             fin_info = infos["final_info"]
             if "success" in infos:
+                # print(fin_info.keys())
                 self.sr += fin_info["success"][mask].cpu().numpy().sum()
                 self.rew += infos["rew"][mask].cpu().numpy().sum()
                 self.el_steps += fin_info["elapsed_steps"][mask].cpu().numpy().sum()
+                if "is_grasped" in fin_info:
+                    self.g_enable = True
+                    self.grasp += fin_info["is_grasped"][mask].cpu().numpy().sum()
             # if self.sr > 0:
             #     print("Success: ", self.sr)
             #     print("Avg Elapsed: ", fin_info["elapsed_steps"][mask].cpu().numpy().mean())
@@ -92,11 +99,15 @@ class ManiSkillAlgoObserver(AlgoObserver):
 
     def after_print_stats(self, frame, epoch_num, total_time):
         if self.new_finished_episodes:
-            self.writer.add_scalar("rewards/success_rate", self.sr/512, frame)
-            self.writer.add_scalar("rewards/final_reward", self.rew/512, frame)
-            self.writer.add_scalar("episode_lengths/el_steps", self.el_steps/512, frame)
-            
+            self.writer.add_scalar("rewards/success_rate", self.sr/self.n_envs, frame)
+            self.writer.add_scalar("rewards/final_reward", self.rew/self.n_envs, frame)
+            self.writer.add_scalar("episode_lengths/el_steps", self.el_steps/self.n_envs, frame)
+            if self.g_enable:
+                self.writer.add_scalar("rewards/grasp_rate", self.grasp/self.n_envs, frame)
+
             self.new_finished_episodes = False
             self.sr = 0
             self.el_steps = 0
             self.rew = 0
+            self.grasp = 0
+
