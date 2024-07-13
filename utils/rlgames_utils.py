@@ -1,4 +1,4 @@
-import gym.spaces
+
 from rl_games.common import env_configurations, vecenv
 from rl_games.common.algo_observer import AlgoObserver
 import torch
@@ -17,7 +17,8 @@ class ManiSkillEnv(vecenv.IVecEnv):
 
     def reset(self):
         out = self.env.reset()
-        return {"obs":out[0]}
+        ot = {"obs":out[0]}
+        return ot
     
     def reset_done(self):
         return self.reset()

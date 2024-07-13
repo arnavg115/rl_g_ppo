@@ -43,7 +43,7 @@ from utils.utils import MultiObserver
 @hydra.main(version_base="1.1", config_name="config", config_path="./cfg")
 def launch_rlg_hydra(cfg: DictConfig):
 
-    import logging
+    import random
     import os
     import mani_skill.envs
     from mani_skill.vector.wrappers.gymnasium import ManiSkillVectorEnv
@@ -86,9 +86,9 @@ def launch_rlg_hydra(cfg: DictConfig):
         envs = gym.make(
            **cfg.task.env
         )
-        envs = ManiSkillVectorEnv(envs, ignore_terminations=True)
+        envs = ManiSkillVectorEnv(envs)
 
-        # if cfg.
+
 
         return envs
 

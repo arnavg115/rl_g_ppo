@@ -9,7 +9,7 @@ params:
 
   network:
     name: actor_critic
-    separate: False
+    separate: True
     space:
       continuous:
         mu_activation: None
@@ -41,13 +41,13 @@ params:
     multi_gpu: ${....multi_gpu}
     ppo: True
     mixed_precision: True
-    normalize_input: True
-    normalize_value: True
+    normalize_input: False
+    normalize_value: False
     value_bootstrap: True
     num_actors: 512
     reward_shaper:
       scale_value: 0.01
-    normalize_advantage: True
+    normalize_advantage: False
     gamma: 0.8
     tau: 0.9
     learning_rate: 3e-4
@@ -57,9 +57,9 @@ params:
     max_epochs: 400
     save_best_after: 200
     save_frequency: 50
-    grad_norm: 1.0
+    grad_norm: 0.5
     entropy_coef: 0.0
-    truncate_grads: False
+    truncate_grads: True
     e_clip: 0.2
     horizon_length: 50
     minibatch_size: 800
