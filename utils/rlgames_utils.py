@@ -88,7 +88,7 @@ class ManiSkillAlgoObserver(AlgoObserver):
                 # print(fin_info.keys())
                 self.sr += fin_info["success"][mask].cpu().numpy().sum()
                 self.rew += infos["rew"][mask].cpu().numpy().sum()
-                self.el_steps += fin_info["elapsed_steps"][mask].cpu().numpy().sum()
+                # self.el_steps += fin_info["elapsed_steps"][mask].cpu().numpy().sum()
                 if "is_grasped" in fin_info:
                     self.g_enable = True
                     self.grasp += fin_info["is_grasped"][mask].cpu().numpy().sum()
@@ -102,7 +102,7 @@ class ManiSkillAlgoObserver(AlgoObserver):
         if self.new_finished_episodes:
             self.writer.add_scalar("rewards/success_rate", self.sr/self.n_envs, frame)
             self.writer.add_scalar("rewards/final_reward", self.rew/self.n_envs, frame)
-            self.writer.add_scalar("episode_lengths/el_steps", self.el_steps/self.n_envs, frame)
+            # self.writer.add_scalar("episode_lengths/el_steps", self.el_steps/self.n_envs, frame)
             if self.g_enable:
                 self.writer.add_scalar("rewards/grasp_rate", self.grasp/self.n_envs, frame)
 

@@ -63,7 +63,7 @@ params:
     e_clip: 0.2
     horizon_length: 50
     minibatch_size: 800
-    mini_epochs: 4
+    mini_epochs: 6
     critic_coef: 2
     clip_value: False
     seq_length: 4 # doesn't matter since no rnn
